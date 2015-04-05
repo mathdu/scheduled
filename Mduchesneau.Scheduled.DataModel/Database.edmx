@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Mduchesneau.Scheduled.DataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Calendar">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ScheduleEvent">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CalendarID" Type="int" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Start" Type="datetime" Nullable="false" />
+          <Property Name="End" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ScheduleEvent_Calendar">
+          <End Role="Calendar" Type="Self.Calendar" Multiplicity="1" />
+          <End Role="ScheduleEvent" Type="Self.ScheduleEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Calendar">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ScheduleEvent">
+              <PropertyRef Name="CalendarID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MduchesneauScheduledDataModelStoreContainer">
+          <EntitySet Name="Calendar" EntityType="Self.Calendar" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ScheduleEvent" EntityType="Self.ScheduleEvent" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ScheduleEvent_Calendar" Association="Self.FK_ScheduleEvent_Calendar">
+            <End Role="Calendar" EntitySet="Calendar" />
+            <End Role="ScheduleEvent" EntitySet="ScheduleEvent" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Mduchesneau.Scheduled.DataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Calendar">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ScheduleEvents" Relationship="Self.FK_ScheduleEvent_Calendar" FromRole="Calendar" ToRole="ScheduleEvent" />
+        </EntityType>
+        <EntityType Name="ScheduleEvent">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CalendarID" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Start" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="End" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Calendar" Relationship="Self.FK_ScheduleEvent_Calendar" FromRole="ScheduleEvent" ToRole="Calendar" />
+        </EntityType>
+        <Association Name="FK_ScheduleEvent_Calendar">
+          <End Role="Calendar" Type="Self.Calendar" Multiplicity="1" />
+          <End Role="ScheduleEvent" Type="Self.ScheduleEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Calendar">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ScheduleEvent">
+              <PropertyRef Name="CalendarID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Database" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Calendars" EntityType="Self.Calendar" />
+          <EntitySet Name="ScheduleEvents" EntityType="Self.ScheduleEvent" />
+          <AssociationSet Name="FK_ScheduleEvent_Calendar" Association="Self.FK_ScheduleEvent_Calendar">
+            <End Role="Calendar" EntitySet="Calendars" />
+            <End Role="ScheduleEvent" EntitySet="ScheduleEvents" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MduchesneauScheduledDataModelStoreContainer" CdmEntityContainer="Database">
+          <EntitySetMapping Name="Calendars">
+            <EntityTypeMapping TypeName="Mduchesneau.Scheduled.DataModel.Calendar">
+              <MappingFragment StoreEntitySet="Calendar">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleEvents">
+            <EntityTypeMapping TypeName="Mduchesneau.Scheduled.DataModel.ScheduleEvent">
+              <MappingFragment StoreEntitySet="ScheduleEvent">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CalendarID" ColumnName="CalendarID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="End" ColumnName="End" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

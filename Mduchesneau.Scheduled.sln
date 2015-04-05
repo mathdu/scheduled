@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mduchesneau.Scheduled.Web",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mduchesneau.Scheduled.Api", "Mduchesneau.Scheduled.Api\Mduchesneau.Scheduled.Api.csproj", "{76B820F2-A21A-4719-B20A-BB4F641293E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mduchesneau.Scheduled.DataModel", "Mduchesneau.Scheduled.DataModel\Mduchesneau.Scheduled.DataModel.csproj", "{E42D890E-0817-4C09-9677-5170FCDDE23F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{76B820F2-A21A-4719-B20A-BB4F641293E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76B820F2-A21A-4719-B20A-BB4F641293E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76B820F2-A21A-4719-B20A-BB4F641293E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E42D890E-0817-4C09-9677-5170FCDDE23F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E42D890E-0817-4C09-9677-5170FCDDE23F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E42D890E-0817-4C09-9677-5170FCDDE23F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E42D890E-0817-4C09-9677-5170FCDDE23F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
