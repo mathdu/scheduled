@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Mduchesneau.Scheduled.Api.Models;
+using Mduchesneau.Scheduled.DataModel;
 using Newtonsoft.Json;
 
 namespace Mduchesneau.Scheduled.Api.Controllers
@@ -19,10 +21,13 @@ namespace Mduchesneau.Scheduled.Api.Controllers
         /// <summary>Get the event for the specified id.</summary>
         /// <param name="id">The id of the event.</param>
         [HttpGet, Route("events/{id}")]
-        public string GetEvent(string id)
+        public ScheduleEvent GetEvent(int id)
         {
-            //return result.Project<Event, EventWrapper>();*/
-            return "";
+            using (Database database = Database.getInstance())
+            {
+                //return result.Project<Event, EventWrapper>();*/
+                return database.ScheduleEvents.First(p => p.ID == id);
+            }
         }
 
         /// <summary>Get all events within bounds for the calendar specified.</summary>
