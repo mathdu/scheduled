@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="schedule">
+<head>
+    <title>Scheduled : schedule viewer</title>
+    <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css"/>
+
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-calendar/src/calendar.js"></script>
+    <script type="text/javascript" src="bower_components/moment/moment.js"></script>
+    <script type="text/javascript" src="bower_components/fullcalendar/dist/fullcalendar.js"></script>
+    <script type="text/javascript" src="bower_components/fullcalendar/dist/gcal.js"></script>
+
+    <script type="text/javascript" src="modules/schedule-calendar.js"></script>
+    <script type="text/javascript" src="modules/schedule-api.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</head>
+<body>
+    <h2>Scheduled: schedule viewer</h2>
+
+    <section ng-controller="ImportController">
+    
+    </section>
+    <section ng-controller="CalendarController as calendar">
+        <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
+            <h4>{{alertMessage}}</h4>
+        </div>
+        <div ui-calendar="uiConfig.calendar" ng-model="events"></div>
+    </section>
+    
+
+</body>
+</html>

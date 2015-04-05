@@ -1,0 +1,23 @@
+{
+  "name": "Mduchesneau.Scheduled.Web",
+  "version": "0.0.1",
+  "authors": [
+    "Mathieu Duchesneau <mduchesneau@gmail.com>"
+  ],
+  "description": "Import, display and validate scheduled events.",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fullcalendar": "~2.3.1",
+    "angular-ui-calendar": "latest",
+    "moment": "~2.9.0",
+    "bootstrap-css": "~3.2.0"
+  }
+}

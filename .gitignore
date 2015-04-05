@@ -1,0 +1,23 @@
+# Visual Studio
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+*.suo
+*.user
+*.sln.docstates
+*.Publish.xml
+
+# NuGet / ReSharper
+packages/*
+!packages/repositories.config
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Mac / Windows
+*.DS_Store
+Thumbs.db
+
+# Web
+bower_components/
