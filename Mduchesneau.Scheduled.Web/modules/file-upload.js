@@ -1,8 +1,8 @@
 ﻿(function() {
-    angular.module('file-upload', [])
-        
-    // file upload control directive
+    // file upload control module
     // inspired by: https://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs
+    angular.module('file-upload', [])
+    
     .directive('simpleFileUpload', ['$parse', function($parse) {
         return {
             restrict: 'A',
@@ -27,11 +27,11 @@
                 transformRequest: angular.identity,
                 headers: { 'Content-Type': undefined }
             })
-            .success(function () {
-                alert('file uploaded!');
+            .success(function (result) {
+                alert('file uploaded! Result: ' + result.Message);
             })
-            .error(function () {
-                alert('file upload error!');
+            .error(function (result) {
+                alert('file upload failed! Error: ' + (result.ExceptionMessage));
             });
         }
     }]);
