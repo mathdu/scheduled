@@ -59,6 +59,8 @@ namespace Mduchesneau.Scheduled.Api.Controllers
             }
         }
 
+        /// <summary>Import schedule events from the contents of the CSV file specified.</summary>
+        /// <returns>If successful, the number of successfully imported schedule events.</returns>
         [HttpPost, Route("events/import")]
         public object ImportFromCsvContent()
         {
@@ -68,15 +70,10 @@ namespace Mduchesneau.Scheduled.Api.Controllers
                 if (file == null)
                     throw new InvalidOperationException("Import file data is null!");
 
-                // Gather parsed data
-                List<ScheduleEventImportModel> importedEvents = ImportHelper.ParseEventsFromCsv(file.InputStream);
-
                 // Import events
-                foreach (ScheduleEventImportModel importedEvent in importedEvents)
-                    ImportHelper.ImportScheduleEvent(database, importedEvent);
+                IEnumerable<ScheduleEvent> importedEvents = ImportHelper.ImportScheduleEvents(database, ImportHelper.ParseEventsFromCsv(file.InputStream));
 
                 database.SaveChanges();
-
                 return new { Message = String.Format("{0} events imported.", importedEvents.Count()) };
             }
         }

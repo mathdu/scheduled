@@ -13,18 +13,20 @@ namespace Mduchesneau.Scheduled.Api.Helpers
         /// <summary>Parse a CSV import file into schedule event import objects.</summary>
         /// <param name="content">The import file content.</param>
         /// <returns></returns>
-        public static List<ScheduleEventImportModel> ParseEventsFromCsv(Stream content)
+        public static IEnumerable<ScheduleEventImportModel> ParseEventsFromCsv(Stream content)
         {
-            // read CSV file
+            // read csv file
             List<ScheduleEventImportModel> importedEvents = new List<ScheduleEventImportModel>();
             using (StreamReader streamReader = new StreamReader(content))
             using (CsvReader reader = new CsvReader(streamReader))
             {
+                // set csv mapping
                 reader.Configuration.RegisterClassMap<ScheduleEventImportModel.ScheduleEventImportModelMapper>();
                 while (reader.Read())
                 {
                     try
                     {
+                        // parse and add import row
                         importedEvents.Add(reader.GetRecord<ScheduleEventImportModel>());
                     }
                     catch (CsvReaderException exception)
@@ -36,21 +38,42 @@ namespace Mduchesneau.Scheduled.Api.Helpers
             }
         }
 
-        /// <summary>Save an imported schedule event object in the database.</summary>
+        /// <summary>Create and add schedule events and their corresponding calendars from the list of import events specified.</summary>
         /// <param name="database">The database instance.</param>
+        /// <param name="importedEvents">The events to import.</param>
+        /// <returns></returns>
+        public static IEnumerable<ScheduleEvent> ImportScheduleEvents(Database database, IEnumerable<ScheduleEventImportModel> importedEvents)
+        {
+            List<ScheduleEvent> events = new List<ScheduleEvent>();
+
+            // group by calendar name
+            Calendar calendar = null;
+            foreach (ScheduleEventImportModel importedEvent in importedEvents.OrderBy(p => p.CalendarName))
+            {
+                // reuse or find calendar
+                calendar = (calendar == null || calendar.Name != importedEvent.CalendarName)
+                            ? database.Calendars.FirstOrDefault(p => p.Name == importedEvent.CalendarName)
+                            : calendar;
+                // create calendar if none of the existing calendars fit
+                calendar = calendar ?? database.Calendars.Add(new Calendar() { Name = importedEvent.CalendarName, Created = DateTime.UtcNow });
+
+                // create event
+                events.Add(CreateScheduleEvent(calendar, importedEvent));
+            }
+            // import
+            return database.ScheduleEvents.AddRange(events);
+        }
+
+        /********
+         * Private methods
+         ********/
+        /// <summary>Save an imported schedule event object in the database.</summary>
+        /// <param name="calendar">The calendar object to link the event to.</param>
         /// <param name="imported">The imported schedule event.</param>
         /// <returns></returns>
-        public static ScheduleEvent ImportScheduleEvent(Database database, ScheduleEventImportModel imported)
+        private static ScheduleEvent CreateScheduleEvent(Calendar calendar, ScheduleEventImportModel imported)
         {
-            // find or create calendar
-            Calendar calendar = database.Calendars.FirstOrDefault(p => p.Name == imported.CalendarName);
-            if (calendar == null)
-            {
-                calendar = new Calendar() { Name = imported.CalendarName, Created = DateTime.UtcNow };
-                calendar = database.Calendars.Add(calendar);
-            }
-            
-            ScheduleEvent scheduleEvent = new ScheduleEvent()
+            return new ScheduleEvent()
             {
                 ID = 1,
                 CalendarID = calendar.ID,
@@ -60,9 +83,6 @@ namespace Mduchesneau.Scheduled.Api.Helpers
                 End = imported.Date.Add(imported.TimeEnd),
                 Created = DateTime.UtcNow
             };
-            database.ScheduleEvents.Add(scheduleEvent);
-
-            return scheduleEvent;
         }
     }
 }
