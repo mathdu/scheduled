@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Mduchesneau.Scheduled.Api.Helpers;
 using Mduchesneau.Scheduled.Api.Models;
 using Mduchesneau.Scheduled.DataModel;
-using Newtonsoft.Json;
 //using System.Web.Http.HttpPost = HttpPost;
 
 namespace Mduchesneau.Scheduled.Api.Controllers
 {
     /// <summary>Retrieve and manage schedule events.</summary>
-    [EnableCors(origins: "http://localhost:23876", headers: "*", methods: "*")]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class EventsController : ApiController
     {
         /*********
@@ -27,7 +25,6 @@ namespace Mduchesneau.Scheduled.Api.Controllers
         {
             using (Database database = new Database())
             {
-                //return result.Project<Event, EventWrapper>();*/
                 return database.ScheduleEvents.First(p => p.ID == id);
             }
         }
