@@ -14,7 +14,7 @@ namespace Mduchesneau.Scheduled.Api.Models
 
         public TimeSpan TimeEnd { get; set; }
 
-        public string EventTitle { get; set; }
+        public string Title { get; set; }
 
         /// <summary>Maps the model fields to a Schedule CSV import file's columns.</summary>
         public sealed class ScheduleEventImportModelMapper : CsvClassMap<ScheduleEventImportModel>
@@ -24,7 +24,7 @@ namespace Mduchesneau.Scheduled.Api.Models
             {
                 // simple mappings
                 Map(p => p.CalendarName).Name("Nom");
-                Map(p => p.EventTitle).Name("Description");
+                Map(p => p.Title).Name("Description");
 
                 // type or data conversions
                 Map(p => p.Date).Name("Date").TypeConverterOption(DateTimeStyles.None);

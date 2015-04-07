@@ -58,7 +58,7 @@ namespace Mduchesneau.Scheduled.Api.Helpers
                 calendar = calendar ?? database.Calendars.Add(new Calendar() { Name = importedEvent.CalendarName, Created = DateTime.UtcNow });
 
                 // create event
-                events.Add(CreateScheduleEvent(calendar, importedEvent));
+                events.Add(CreateScheduleEvent(database, calendar, importedEvent));
             }
             // import
             return database.ScheduleEvents.AddRange(events);
@@ -68,18 +68,28 @@ namespace Mduchesneau.Scheduled.Api.Helpers
          * Private methods
          ********/
         /// <summary>Save an imported schedule event object in the database.</summary>
+        /// <param name="database">The database instance.</param>
         /// <param name="calendar">The calendar object to link the event to.</param>
         /// <param name="imported">The imported schedule event.</param>
         /// <returns></returns>
-        private static ScheduleEvent CreateScheduleEvent(Calendar calendar, ScheduleEventImportModel imported)
+        private static ScheduleEvent CreateScheduleEvent(Database database, Calendar calendar, ScheduleEventImportModel imported)
         {
+            // verify if event already exists before creating
+            DateTime startDateTime = imported.Date.Add(imported.TimeStart);
+            var eventExists = database.ScheduleEvents.Any(p => p.CalendarID == calendar.ID
+                                                            && p.Title == imported.Title
+                                                            && p.Start == startDateTime);
+            if (eventExists)
+                throw new InvalidOperationException(String.Format("Can't import '{0}' in '{1}': Event already exists!", imported.Title, imported.CalendarName));
+
+            // create event
             return new ScheduleEvent()
             {
                 ID = 1,
                 CalendarID = calendar.ID,
                 Calendar = calendar,
-                Title = imported.EventTitle,
-                Start = imported.Date.Add(imported.TimeStart),
+                Title = imported.Title,
+                Start = startDateTime,
                 End = imported.Date.Add(imported.TimeEnd),
                 Created = DateTime.UtcNow
             };
