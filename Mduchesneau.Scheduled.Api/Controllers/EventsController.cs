@@ -37,15 +37,23 @@ namespace Mduchesneau.Scheduled.Api.Controllers
         /// <param name="start">The earliest date boundary to query events for.</param>
         /// <param name="end">The latest date boundary to query events for.</param>
         [HttpGet, Route("events/calendar/{calendarId}")]
-        public List<ScheduleEventWrapper> GetEventsForCalendar(string calendarId, DateTime start, DateTime end)
+        public List<ScheduleEventWrapper> GetEventsForCalendar(int calendarId, DateTime? start = null, DateTime? end = null)
         {
-            using (var client = new WebClient())
+            using (Database database = new Database())
             {
-                Uri contextUrl = HttpContext.Current.Request.Url;
-                string baseUrl = String.Format("{0}://{1}:{2}", contextUrl.Scheme, contextUrl.Host, contextUrl.Port);
-                string content = client.DownloadString(String.Format("{0}/events.json", baseUrl));
-                List<ScheduleEventWrapper> events = JsonConvert.DeserializeObject<List<ScheduleEventWrapper>>(content);
-                return events;
+                var events = from scheduleEvent in database.ScheduleEvents
+                             where scheduleEvent.CalendarID == calendarId
+                                && (start == null || scheduleEvent.Start >= start)
+                                && (end == null || scheduleEvent.End <= end)
+                             
+                             select new ScheduleEventWrapper() { 
+                                 Id = scheduleEvent.ID, 
+                                 CalendarId = scheduleEvent.CalendarID,
+                                 Title = scheduleEvent.Title,
+                                 Start = scheduleEvent.Start,
+                                 End = scheduleEvent.End
+                             };
+                return events.ToList();
             }
         }
 
