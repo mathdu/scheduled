@@ -103,6 +103,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ImportHelper.cs" />
+    <Compile Include="Models\CalendarWrapper.cs" />
     <Compile Include="Models\ScheduleEventImportModel.cs" />
     <Compile Include="Models\ScheduleEventWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

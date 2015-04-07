@@ -51,11 +51,13 @@ namespace Mduchesneau.Scheduled.Api.Controllers
 
         /// <summary>Get all existing calendars.</summary>
         [HttpGet, Route("events/calendars")]
-        public List<Calendar> GetCalendars()
+        public List<CalendarWrapper> GetCalendars()
         {
             using (Database database = new Database())
             {
-                return database.Calendars.ToList();
+                var calendars = from calendar in database.Calendars
+                                select new CalendarWrapper() { Id = calendar.ID, Name = calendar.Name };
+                return calendars.ToList();
             }
         }
 
