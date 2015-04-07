@@ -4,13 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Mduchesneau.Scheduled.DataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Mduchesneau.Scheduled.DataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Calendar">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="ScheduleEvent">
           <Key>
@@ -21,6 +22,7 @@
           <Property Name="Title" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Start" Type="datetime" Nullable="false" />
           <Property Name="End" Type="datetime" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <Association Name="FK_ScheduleEvent_Calendar">
           <End Role="Calendar" Type="Self.Calendar" Multiplicity="1" />
@@ -42,8 +44,7 @@
             <End Role="ScheduleEvent" EntitySet="ScheduleEvent" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Mduchesneau.Scheduled.DataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -54,6 +55,7 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="ScheduleEvents" Relationship="Self.FK_ScheduleEvent_Calendar" FromRole="Calendar" ToRole="ScheduleEvent" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="ScheduleEvent">
           <Key>
@@ -65,6 +67,7 @@
           <Property Name="Start" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="End" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Calendar" Relationship="Self.FK_ScheduleEvent_Calendar" FromRole="ScheduleEvent" ToRole="Calendar" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <Association Name="FK_ScheduleEvent_Calendar">
           <End Role="Calendar" Type="Self.Calendar" Multiplicity="1" />
@@ -95,6 +98,7 @@
           <EntitySetMapping Name="Calendars">
             <EntityTypeMapping TypeName="Mduchesneau.Scheduled.DataModel.Calendar">
               <MappingFragment StoreEntitySet="Calendar">
+                <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>
@@ -103,6 +107,7 @@
           <EntitySetMapping Name="ScheduleEvents">
             <EntityTypeMapping TypeName="Mduchesneau.Scheduled.DataModel.ScheduleEvent">
               <MappingFragment StoreEntitySet="ScheduleEvent">
+                <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="CalendarID" ColumnName="CalendarID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />

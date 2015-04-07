@@ -21,6 +21,7 @@ namespace Mduchesneau.Scheduled.DataModel
     
         public int ID { get; set; }
         public string Name { get; set; }
+        public System.DateTime Created { get; set; }
     
         public virtual ICollection<ScheduleEvent> ScheduleEvents { get; set; }
     }

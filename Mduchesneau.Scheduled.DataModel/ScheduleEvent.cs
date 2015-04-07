@@ -19,6 +19,7 @@ namespace Mduchesneau.Scheduled.DataModel
         public string Title { get; set; }
         public System.DateTime Start { get; set; }
         public System.DateTime End { get; set; }
+        public System.DateTime Created { get; set; }
     
         public virtual Calendar Calendar { get; set; }
     }
