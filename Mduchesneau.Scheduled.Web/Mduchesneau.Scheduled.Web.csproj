@@ -1025,6 +1025,7 @@
     <Content Include="bower_components\moment\min\moment-with-locales.min.js" />
     <Content Include="bower_components\moment\min\moment.min.js" />
     <Content Include="bower_components\moment\moment.js" />
+    <Content Include="modules\file-upload.js" />
     <Content Include="index.html" />
     <Content Include="modules\schedule-calendar.js" />
     <Content Include="modules\schedule-api.js" />
