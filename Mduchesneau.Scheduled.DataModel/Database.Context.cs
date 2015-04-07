@@ -15,17 +15,6 @@ namespace Mduchesneau.Scheduled.DataModel
     
     public partial class Database : DbContext
     {
-        /// <summary></summary>
-        private static Database database;
-
-        /// <summary>Return the database database.</summary>
-        public static Database getInstance()
-        {
-            if (database == null)
-                database = new Database();
-            return database;
-        }
-
         public Database()
             : base("name=Database")
         {

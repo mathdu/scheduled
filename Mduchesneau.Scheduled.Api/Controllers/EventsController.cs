@@ -25,7 +25,7 @@ namespace Mduchesneau.Scheduled.Api.Controllers
         [HttpGet, Route("events/{id}")]
         public ScheduleEvent GetEvent(int id)
         {
-            using (Database database = Database.getInstance())
+            using (Database database = new Database())
             {
                 //return result.Project<Event, EventWrapper>();*/
                 return database.ScheduleEvents.First(p => p.ID == id);
@@ -53,7 +53,7 @@ namespace Mduchesneau.Scheduled.Api.Controllers
         [HttpGet, Route("events/calendars")]
         public List<Calendar> GetCalendars()
         {
-            using (Database database = Database.getInstance())
+            using (Database database = new Database())
             {
                 return database.Calendars.ToList();
             }
@@ -64,7 +64,7 @@ namespace Mduchesneau.Scheduled.Api.Controllers
         [HttpPost, Route("events/import")]
         public object ImportFromCsvContent()
         {
-            using (Database database = Database.getInstance())
+            using (Database database = new Database())
             {
                 var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (file == null)
