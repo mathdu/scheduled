@@ -2,5 +2,24 @@
 }
 
 .calAlert{
-	width: 595px; float: right; margin-bottom: 5px;
+    display: inline-block;
+	width: 595px; 
+    float: none; 
+    margin-bottom: 5px;
 }
+
+.importSection {
+    display: flex;
+    margin: 10px 10px 10px 10px;
+}
+
+.selectSection {
+    display: flex;
+    margin: 10px 10px 10px 10px;
+}
+
+.calendarSection {
+    display: flex;
+    margin: 10px 10px 10px 10px;
+}
+

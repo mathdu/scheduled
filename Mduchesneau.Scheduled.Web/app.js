@@ -1,31 +1,43 @@
 ﻿(function () {
     angular.module('schedule', ['schedule-calendar', 'schedule-api', 'file-upload'])
 
-    .controller('ImportController', [
-        '$scope', 'fileUpload', function($scope, fileUpload) {
-            var importer = this;
+    .controller('ImportController', ['$scope', 'apiFileUpload', function ($scope, apiFileUpload) {
+        var importer = this;
 
-            importer.uploadFile = function() {
-                var file = $scope.importFile;
-                var uploadUrl = "http://localhost:22249/events/import";
-                fileUpload.uploadFileToUrl(file, uploadUrl);
-            };
+        importer.uploadFile = function() {
+            apiFileUpload.uploadFile($scope.importFile);
+        };
+    }])
 
-        }
-    ])
-    .controller('CalendarController', [
-        '$scope', 'configureCalendarUi', 'corsHeaders', function($scope, configureCalendarUi, corsHeaders) {
-            $scope.uiConfig = configureCalendarUi($scope);
+    .controller('CalendarSelectController', ['$scope', 'apiCalendars', function ($scope,apiCalendars) {
+        
+    }])
 
-            $scope.eventSource =
-            {
-                url: "http://localhost:22249/events/calendar/45",
-                headers: corsHeaders,
+    .controller('CalendarController', ['$scope', '$element', 'uiCalendarConfig', 'configureCalendarUi', 'calendarSource', 'apiCalendars', function ($scope, $element, uiCalendarConfig, configureCalendarUi, calendarSource, apiCalendars) {
+        var calendar = this;
+
+        $scope.eventSource = [];
+            /*{
+                url: "http://localhost:22249/events/calendar/63",
+                //headers: corsHeaders,
                 color: "DarkCyan",
                 textColor: "white"
-            };
+            };*/
+        $scope.events = [$scope.eventSource];
 
-            $scope.events = [$scope.eventSource];
-        }
-    ]);
+        $scope.uiConfig = configureCalendarUi($scope);
+
+        // get calendar list
+        apiCalendars.getCalendars(function (data) {
+            calendar.calendars = data;
+            calendar.selectedCalendar = calendar.calendars[0].Id;
+            calendar.loadCalendar(calendar.selectedCalendar);
+        });
+
+        // calendar load
+        calendar.loadCalendar = function(calendarId) {
+            calendarSource.loadCalendar($scope, calendarId);
+        };
+
+    }]);
 })();

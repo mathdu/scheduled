@@ -2,37 +2,46 @@
 <html xmlns="http://www.w3.org/1999/xhtml" ng-app="schedule">
 <head>
     <title>Scheduled : schedule viewer</title>
-    <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.css"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
     <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css"/>
-
+    <link rel="stylesheet" href="styles/scheduled.css" />
 
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="bower_components/angular-ui-calendar/src/calendar.js"></script>
     <script type="text/javascript" src="bower_components/moment/moment.js"></script>
     <script type="text/javascript" src="bower_components/fullcalendar/dist/fullcalendar.js"></script>
     <script type="text/javascript" src="bower_components/fullcalendar/dist/gcal.js"></script>
-
+    <script type="text/javascript" src="bower_components/angular-ui-bootstrap/src/buttons/buttons.js"></script>
+    
     <script type="text/javascript" src="modules/file-upload.js"></script>
     <script type="text/javascript" src="modules/schedule-calendar.js"></script>
     <script type="text/javascript" src="modules/schedule-api.js"></script>
     <script type="text/javascript" src="app.js"></script>
 </head>
-<body>
+<body ng-controller="CalendarController as calendar">
     <h2>Scheduled: schedule viewer</h2>
 
-    <section ng-controller="ImportController as importer">
+    <section ng-controller="ImportController as importer" class="importSection">
         <input type="file" simple-file-upload="importFile" />
         <button ng-click="importer.uploadFile()">Upload schedule</button>
     </section>
-    <section ng-controller="CalendarController as calendar">
+
+    <section class="selectSection">
+        <div class="btn-group">
+            <calendar-select ng-repeat="cal in calendar.calendars | orderBy:'+Name'"></calendar-select>
+        </div>
+    </section>
+
+    <section class="calendarSection">
         <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
             <h4>{{alertMessage}}</h4>
         </div>
-        <div ui-calendar="uiConfig.calendar" ng-model="events"></div>
+        <div ui-calendar="uiConfig.calendar" ng-model="events" id="scheduleCalendar"></div>
     </section>
-    
 
 </body>
 </html>
