@@ -39,26 +39,26 @@ namespace Mduchesneau.Scheduled.Api.Helpers
         }
 
         /// <summary>Create and add schedule events and their corresponding calendars from the list of import events specified.</summary>
+        /// <remarks>This method purges all currently existing calendars and schedule events.</remarks>
         /// <param name="database">The database instance.</param>
         /// <param name="importedEvents">The events to import.</param>
-        /// <returns></returns>
+        /// <returns>The events successfully imported.</returns>
         public static IEnumerable<ScheduleEvent> ImportScheduleEvents(Database database, IEnumerable<ScheduleEventImportModel> importedEvents)
         {
-            List<ScheduleEvent> events = new List<ScheduleEvent>();
+            ResetCalendarData(database);
 
+            List<ScheduleEvent> events = new List<ScheduleEvent>();
             // group by calendar name
             Calendar calendar = null;
             foreach (ScheduleEventImportModel importedEvent in importedEvents.OrderBy(p => p.CalendarName))
             {
                 // reuse or find calendar
                 calendar = (calendar == null || calendar.Name != importedEvent.CalendarName)
-                            ? database.Calendars.FirstOrDefault(p => p.Name == importedEvent.CalendarName)
+                            ? database.Calendars.Add(new Calendar() { Name = importedEvent.CalendarName, Created = DateTime.UtcNow })
                             : calendar;
-                // create calendar if none of the existing calendars fit
-                calendar = calendar ?? database.Calendars.Add(new Calendar() { Name = importedEvent.CalendarName, Created = DateTime.UtcNow });
 
                 // create event
-                events.Add(CreateScheduleEvent(database, calendar, importedEvent));
+                events.Add(CreateScheduleEvent(calendar, importedEvent));
             }
             // import
             return database.ScheduleEvents.AddRange(events);
@@ -67,21 +67,20 @@ namespace Mduchesneau.Scheduled.Api.Helpers
         /********
          * Private methods
          ********/
-        /// <summary>Save an imported schedule event object in the database.</summary>
+        /// <summary>Remove currently existing calendar and event data.</summary>
         /// <param name="database">The database instance.</param>
+        private static void ResetCalendarData(Database database)
+        {
+            database.ScheduleEvents.RemoveRange(database.ScheduleEvents);
+            database.Calendars.RemoveRange(database.Calendars);
+        }
+
+        /// <summary>Save an imported schedule event object in the database.</summary>
         /// <param name="calendar">The calendar object to link the event to.</param>
         /// <param name="imported">The imported schedule event.</param>
         /// <returns></returns>
-        private static ScheduleEvent CreateScheduleEvent(Database database, Calendar calendar, ScheduleEventImportModel imported)
+        private static ScheduleEvent CreateScheduleEvent(Calendar calendar, ScheduleEventImportModel imported)
         {
-            // verify if event already exists before creating
-            DateTime startDateTime = imported.Date.Add(imported.TimeStart);
-            var eventExists = database.ScheduleEvents.Any(p => p.CalendarID == calendar.ID
-                                                            && p.Title == imported.Title
-                                                            && p.Start == startDateTime);
-            if (eventExists)
-                throw new InvalidOperationException(String.Format("Can't import '{0}' in '{1}': Event already exists!", imported.Title, imported.CalendarName));
-
             // create event
             return new ScheduleEvent()
             {
@@ -89,7 +88,7 @@ namespace Mduchesneau.Scheduled.Api.Helpers
                 CalendarID = calendar.ID,
                 Calendar = calendar,
                 Title = imported.Title,
-                Start = startDateTime,
+                Start = imported.Date.Add(imported.TimeStart),
                 End = imported.Date.Add(imported.TimeEnd),
                 Created = DateTime.UtcNow
             };
