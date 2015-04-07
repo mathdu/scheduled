@@ -1,4 +1,6 @@
-﻿using System.Web.Http;
+﻿using System.Net.Http;
+using System.Web.Http;
+using System.Web.Http.Routing;
 
 namespace Mduchesneau.Scheduled.Api
 {
@@ -12,11 +14,8 @@ namespace Mduchesneau.Scheduled.Api
             // Web API routes
             config.MapHttpAttributeRoutes();
 
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+            foreach (string method in new[] { "GET", "POST", "PUT", "DELETE" })
+                config.Routes.MapHttpRoute("Default" + method, "{controller}", new { action = method }, constraints: new { method = new HttpMethodConstraint(new HttpMethod(method)) });
         }
     }
 }

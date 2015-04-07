@@ -5,15 +5,17 @@ using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using Mduchesneau.Scheduled.Api.Helpers;
 using Mduchesneau.Scheduled.Api.Models;
 using Mduchesneau.Scheduled.DataModel;
 using Newtonsoft.Json;
+//using System.Web.Http.HttpPost = HttpPost;
 
 namespace Mduchesneau.Scheduled.Api.Controllers
 {
     /// <summary>Retrieve and manage schedule events.</summary>
     [EnableCors(origins: "http://localhost:23876", headers: "*", methods: "*")]
-    public class EventController : ApiController
+    public class EventsController : ApiController
     {
         /*********
         ** Public methods
@@ -44,6 +46,38 @@ namespace Mduchesneau.Scheduled.Api.Controllers
                 string content = client.DownloadString(String.Format("{0}/events.json", baseUrl));
                 List<ScheduleEventWrapper> events = JsonConvert.DeserializeObject<List<ScheduleEventWrapper>>(content);
                 return events;
+            }
+        }
+
+        /// <summary>Get all existing calendars.</summary>
+        [HttpGet, Route("events/calendars")]
+        public List<Calendar> GetCalendars()
+        {
+            using (Database database = Database.getInstance())
+            {
+                return database.Calendars.ToList();
+            }
+        }
+
+        [HttpPost, Route("events/import")]
+        public object ImportFromCsvContent()
+        {
+            using (Database database = Database.getInstance())
+            {
+                var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                if (file == null)
+                    throw new InvalidOperationException("Import file data is null!");
+
+                // Gather parsed data
+                List<ScheduleEventImportModel> importedEvents = ImportHelper.ParseEventsFromCsv(file.InputStream);
+
+                // Import events
+                foreach (ScheduleEventImportModel importedEvent in importedEvents)
+                    ImportHelper.ImportScheduleEvent(database, importedEvent);
+
+                database.SaveChanges();
+
+                return new { Message = String.Format("{0} events imported.", importedEvents.Count()) };
             }
         }
     }
