@@ -64,23 +64,23 @@ namespace Mduchesneau.Scheduled.Api.Controllers
             using (Database database = new Database())
             {
                 // get ordered events
-                var events = database.ScheduleEvents.Where(p => p.CalendarID == calendarId).OrderBy(p => p.Start);
+                var events = database.ScheduleEvents.Where(p => p.CalendarID == calendarId).OrderBy(p => p.Start).ToList();
+                
+                List<ScheduleEventWrapper> overlapping = new List<ScheduleEventWrapper>();
+                ScheduleEvent lastEvent = events.Last();
+                ScheduleEvent previousEvent = null; 
 
                 // look for overlaps
-                List<ScheduleEventWrapper> overlapping = new List<ScheduleEventWrapper>();
-                ScheduleEvent lastEvent = null;
                 foreach (ScheduleEvent scheduleEvent in events)
                 {
-                    if (lastEvent != null && scheduleEvent.Start < lastEvent.End) // equal is not considered an overlap
+                    if (previousEvent != null && scheduleEvent.Start < previousEvent.End) // equal is not considered an overlap
                     {
-                        overlapping.Add(GetScheduleEventWrapper(lastEvent));
-
-                        // also add the very last item if it's part of an overlap
-                        if (scheduleEvent.Equals(events.Last()))
-                            overlapping.Add(GetScheduleEventWrapper(scheduleEvent));
+                        overlapping.Add(GetScheduleEventWrapper(scheduleEvent));
+                        if (overlapping.All(p => p.Id != previousEvent.ID))
+                            overlapping.Add(GetScheduleEventWrapper(previousEvent));
                     }
 
-                    lastEvent = scheduleEvent;
+                    previousEvent = scheduleEvent;
                 }
                 return overlapping;
             }
