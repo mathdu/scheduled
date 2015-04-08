@@ -15,6 +15,9 @@
             apiCalendarEvents.getCalendarEvents(calendarId, null, null, function(data) {
                 $scope.events.splice(0, $scope.events.length);
                 $scope.events.push(data);
+
+                if (data.length > 0)
+                    $scope.$emit('calendar.loaded', { displayDate: data[0].start });
             });
         };
     }])

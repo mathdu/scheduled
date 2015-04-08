@@ -39,5 +39,11 @@
             calendarSource.loadCalendar($scope, calendarId);
         };
 
+        // update calendar view on load
+        $scope.$on("calendar.loaded", function(event, args) {
+            if (!!args.displayDate)
+                //uiCalendarConfig.calendars.scheduleCalendar.fullCalendar('gotoDate', args.displayDate);
+                $("#scheduleCalendar").fullCalendar('gotoDate', args.displayDate);
+        });
     }]);
 })();
