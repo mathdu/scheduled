@@ -29,7 +29,7 @@ namespace Mduchesneau.Scheduled.Api.Models
                 // type or data conversions
                 Map(p => p.Date).Name("Date").TypeConverterOption(DateTimeStyles.None);
                 Map(p => p.TimeStart).Name("Heure début").TypeConverterOption(DateTimeStyles.None);
-                Map(p => p.TimeStart).Name("Heure fin").TypeConverterOption(DateTimeStyles.None);
+                Map(p => p.TimeEnd).Name("Heure fin").TypeConverterOption(DateTimeStyles.None);
             }
         }
     }
