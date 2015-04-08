@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Http.Results;
 using Mduchesneau.Scheduled.Api.Helpers;
 using Mduchesneau.Scheduled.Api.Models;
 using Mduchesneau.Scheduled.DataModel;
@@ -54,6 +55,37 @@ namespace Mduchesneau.Scheduled.Api.Controllers
             }
         }
 
+        /// <summary>Get all overlapping events for the calendar specified.</summary>
+        /// <remarks>A start time equal to the end time of another event will not be considered an overlap.</remarks>
+        /// <param name="calendarId">Id of the calendar.</param>
+        [HttpGet, Route("events/calendar/overlapping/{calendarId}")]
+        public List<ScheduleEventWrapper> GetOverlappingEventsForCalendar(int calendarId)
+        {
+            using (Database database = new Database())
+            {
+                // get ordered events
+                var events = database.ScheduleEvents.Where(p => p.CalendarID == calendarId).OrderBy(p => p.Start);
+
+                // look for overlaps
+                List<ScheduleEventWrapper> overlapping = new List<ScheduleEventWrapper>();
+                ScheduleEvent lastEvent = null;
+                foreach (ScheduleEvent scheduleEvent in events)
+                {
+                    if (lastEvent != null && scheduleEvent.Start < lastEvent.End) // equal is not considered an overlap
+                    {
+                        overlapping.Add(GetScheduleEventWrapper(lastEvent));
+
+                        // also add the very last item if it's part of an overlap
+                        if (scheduleEvent.Equals(events.Last()))
+                            overlapping.Add(GetScheduleEventWrapper(scheduleEvent));
+                    }
+
+                    lastEvent = scheduleEvent;
+                }
+                return overlapping;
+            }
+        }
+
         /// <summary>Get all existing calendars.</summary>
         [HttpGet, Route("events/calendars")]
         public List<CalendarWrapper> GetCalendars()
@@ -83,6 +115,22 @@ namespace Mduchesneau.Scheduled.Api.Controllers
                 database.SaveChanges();
                 return new { Message = String.Format("{0} events imported.", importedEvents.Count()) };
             }
+        }
+
+        /*********
+         * Private methods
+         ******/
+        /// <summary>Build and return a schedule event wrapper.</summary>
+        /// <param name="scheduleEvent">The schedule event to build the wrapper from.</param>
+        private ScheduleEventWrapper GetScheduleEventWrapper(ScheduleEvent scheduleEvent)
+        {
+            return new ScheduleEventWrapper() { 
+                Id = scheduleEvent.ID, 
+                CalendarId = scheduleEvent.CalendarID,
+                Title = scheduleEvent.Title,
+                Start = scheduleEvent.Start,
+                End = scheduleEvent.End
+            };
         }
     }
 }
