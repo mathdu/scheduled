@@ -8,6 +8,11 @@
     margin-bottom: 5px;
 }
 
+.actionButton {
+    margin: 10px 10px 10px 10px;
+    display: inline-block;
+}
+
 .importSection {
     display: flex;
     margin: 10px 10px 10px 10px;

@@ -11,7 +11,7 @@
         };
     })
 
-    .service('apiCalendars', ['$http', 'apiBaseUrl', function ($http, apiBaseUrl) {
+    .service('scheduleApi', ['$http', 'apiBaseUrl', function ($http, apiBaseUrl) {
 
         this.getCalendars = function(callback) {
             $http.get(apiBaseUrl + '/calendars')
@@ -19,12 +19,16 @@
                 callback(data);
             });
         };
-    }])
-
-    .service('apiCalendarEvents', ['$http', 'apiBaseUrl', function ($http, apiBaseUrl) {
 
         this.getCalendarEvents = function (calendarId, start, end, callback) {
             $http.get(apiBaseUrl + '/calendar/' + calendarId, { params: { start: start, end: end } })
+            .success(function (data) {
+                callback(data);
+            });
+        };
+
+        this.getOverlappingCalendarEvents = function (calendarId, callback) {
+            $http.get(apiBaseUrl + '/calendar/overlapping/' + calendarId)
             .success(function (data) {
                 callback(data);
             });

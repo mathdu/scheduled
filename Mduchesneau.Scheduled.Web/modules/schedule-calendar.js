@@ -8,11 +8,11 @@
         };
     })
 
-    .service('calendarSource', ['apiBaseUrl', 'apiCalendarEvents', 'corsHeaders', function (apiBaseUrl, apiCalendarEvents, corsHeaders) {
+    .service('calendarSource', ['apiBaseUrl', 'scheduleApi', function (apiBaseUrl, scheduleApi) {
 
         this.loadCalendar = function ($scope, calendarId) {
 
-            apiCalendarEvents.getCalendarEvents(calendarId, null, null, function(data) {
+            scheduleApi.getCalendarEvents(calendarId, null, null, function (data) {
                 $scope.events.splice(0, $scope.events.length);
                 $scope.events.push(data);
 

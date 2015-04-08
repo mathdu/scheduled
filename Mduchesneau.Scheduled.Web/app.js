@@ -9,32 +9,22 @@
         };
     }])
 
-    .controller('CalendarSelectController', ['$scope', 'apiCalendars', function ($scope,apiCalendars) {
-        
-    }])
-
-    .controller('CalendarController', ['$scope', '$element', 'uiCalendarConfig', 'configureCalendarUi', 'calendarSource', 'apiCalendars', function ($scope, $element, uiCalendarConfig, configureCalendarUi, calendarSource, apiCalendars) {
+    .controller('CalendarController', ['$scope', '$element', 'uiCalendarConfig', 'configureCalendarUi', 'calendarSource', 'scheduleApi', function ($scope, $element, uiCalendarConfig, configureCalendarUi, calendarSource, scheduleApi) {
         var calendar = this;
 
+        // initialize calendar & sources
         $scope.eventSource = [];
-            /*{
-                url: "http://localhost:22249/events/calendar/63",
-                //headers: corsHeaders,
-                color: "DarkCyan",
-                textColor: "white"
-            };*/
         $scope.events = [$scope.eventSource];
-
         $scope.uiConfig = configureCalendarUi($scope);
 
         // get calendar list
-        apiCalendars.getCalendars(function (data) {
+        scheduleApi.getCalendars(function (data) {
             calendar.calendars = data;
             calendar.selectedCalendar = calendar.calendars[0].Id;
             calendar.loadCalendar(calendar.selectedCalendar);
         });
 
-        // calendar load
+        // calendar load method
         calendar.loadCalendar = function(calendarId) {
             calendarSource.loadCalendar($scope, calendarId);
         };
@@ -45,5 +35,21 @@
                 //uiCalendarConfig.calendars.scheduleCalendar.fullCalendar('gotoDate', args.displayDate);
                 $("#scheduleCalendar").fullCalendar('gotoDate', args.displayDate);
         });
+
+        calendar.validateSchedule = function() {
+            scheduleApi.getOverlappingCalendarEvents(calendar.selectedCalendar, function(data) {
+                // no overlapping events
+                if (data.length === 0)
+                    return alert("Schedule is valid.");
+
+                // has overlapping events
+                var eventListing = "";
+                angular.forEach(data, function (event) {
+                    eventListing += event.title + " (" + event.start + ")" + "\n";
+                });
+
+                return alert("Schedule is invalid! The following events are overlapping:\n\n" + eventListing);
+            });
+        };
     }]);
 })();

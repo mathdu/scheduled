@@ -35,6 +35,11 @@
             <calendar-select ng-repeat="cal in calendar.calendars | orderBy:'+Name'"></calendar-select>
         </div>
     </section>
+    <section class="selectSection">
+        <div class="btn-group">
+            <button class="actionButton" ng-click="calendar.validateSchedule()">Validate current schedule</button>
+        </div>
+    </section>
 
     <section class="calendarSection">
         <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
